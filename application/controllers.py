@@ -21,6 +21,8 @@ def mllost():
 def mlfound():
     query=request.json
     dataset=get_lost()
+    print(query)
+    print(dataset)
     data=search(query, dataset)
     #convert dictionary data returned from search function to json
     jsondata=json.dumps(data)

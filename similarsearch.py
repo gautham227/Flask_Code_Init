@@ -1,7 +1,11 @@
 from sentence_transformers import SentenceTransformer, util
 model = SentenceTransformer('all-MiniLM-L6-v2')
 def search(inputtext,database):
-    sentences=inputtext['description']+database['description']
+    des=[]
+    for i in database:
+        des.append(i['attributes']['description'])
+    print(inputtext['description'])
+    sentences=[inputtext['description']]+des
     embeddings = model.encode(sentences, convert_to_tensor=True)
     cosine_scores = util.cos_sim(embeddings, embeddings)
     pairs = []
@@ -12,11 +16,14 @@ def search(inputtext,database):
     for pair in pairs:
         i, j = pair['index']
         result={}
-        if sentences[i] in inputtext:
-           result['match'].append(sentences[j])
-           result['score'].append(pair['score'])
+        if sentences[i] in inputtext['description']:
+            if 'match' not in result:
+                result['match']=[]
+                result['score']=[]
+            result['match'].append(sentences[j])
+            result['score'].append(pair['score'])
     temp=[]
     for i in database:
-        if i['description'] in result['match']:
+        if i['attributes']['description'] in result['match']:
             temp.append(i)
     return temp
