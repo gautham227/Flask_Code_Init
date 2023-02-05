@@ -1,10 +1,12 @@
 from sentence_transformers import SentenceTransformer, util
+from application.utils import get_lost, get_found
 model = SentenceTransformer('all-MiniLM-L6-v2')
 def search(inputtext,database):
     des=[]
+    print("hi")
+    print(database)
     for i in database:
-        des.append(i['attributes']['description'])
-    print(inputtext['description'])
+        des.append(i['description'])
     sentences=[inputtext['description']]+des
     embeddings = model.encode(sentences, convert_to_tensor=True)
     cosine_scores = util.cos_sim(embeddings, embeddings)
@@ -24,6 +26,6 @@ def search(inputtext,database):
             result['score'].append(pair['score'])
     temp=[]
     for i in database:
-        if i['attributes']['description'] in result['match']:
+        if i['description'] in result['match']:
             temp.append(i)
     return temp
